@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dust Material Search (Python)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Dust Material Search</h1>
+    <form method="get">
+        <input type="text" name="query" placeholder="Search by material name" value="{{ request.args.get('query', '') }}">
+        <button type="submit">Search</button>
+    </form>
+    {% if results %}
+        <p>{{ results|length }} result(s) found.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Lower explosion limit<br>[g/m³]</th>
+                    <th>Max explosion overpressure<br>[bar]</th>
+                    <th>Kst<br>[bar·m/s]</th>
+                    <th>Explosibility</th>
+                    <th>Limit oxygen concentration<br>[%]</th>
+                    <th>Minimum ignition energy<br>[mJ]</th>
+                    <th>Ignition temperature<br>[°C]</th>
+                    <th>Ignition temperature (Bar)<br>[°C]</th>
+                    <th>Glowing temperature<br>[°C]</th>
+                    <th>Combustibility<br>[BZ]</th>
+                    <th>Median Size<br>[µm]</th>
+                    <th>Particle size<br><500 µm</th>
+                    <th>Particle size<br><250 µm</th>
+                    <th>Particle size<br><125 µm</th>
+                    <th>Particle size<br><71 µm</th>
+                    <th>Particle size<br><63 µm</th>
+                    <th>Particle size<br><32 µm</th>
+                    <th>Particle size<br><20 µm</th>
+                    <th>Moisture Content<br>[%]</th>
+                    <th>Group No</th>
+                    <th>Group Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in results_to_show %}
+                <tr>
+                    <td>{{ entry.material }}</td>
+                    {% for val in entry.explosion_properties %}
+                        <td>{{ val }}</td>
+                    {% endfor %}
+                    <td>{{ entry.median_size }}</td>
+                    {% for val in entry.particle_distribution %}
+                        <td>{{ val }}</td>
+                    {% endfor %}
+                    <td>{{ entry.extra_content }}</td>
+                    <td>{{ entry.group_number }}</td>
+                    <td>{{ entry.group_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if show_more %}
+            <form method="get">
+                <input type="hidden" name="query" value="{{ request.args.get('query', '') }}">
+                <input type="hidden" name="page" value="{{ page + 1 }}">
+                <button type="submit">Show more</button>
+            </form>
+        {% endif %}
+    {% elif query %}
+        <p>No results found.</p>
+    {% endif %}
+</body>
+</html>
